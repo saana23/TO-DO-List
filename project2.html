@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TO-DO List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">TO-DO's</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Items
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled">Contact</a>
+          </li>
+        </ul>
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-4">
+    <h2 class="text-center">TO-DO List</h2>
+    
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Title of your Task</label>
+        <input type="text" class="form-control" id="title">
+        <div id="title" class="form-text">Add an item to the list.</div>
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" placeholder="Jot down the description of your task" id="description"></textarea>
+      </div>
+      <button type="submit" id="add" class="btn btn-primary">Add task to the list</button>
+
+    
+
+    <div id="items" class="my-4">
+      <h2>Item List</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">SNo</th>
+            <th scope="col">Task to do</th>
+            <th scope="col">Task Description</th>
+            <th scope="col">Actions</th>
+
+          </tr>
+        </thead>
+        <tbody id="tablebody">
+          <tr>
+            <th scope="row">1</th>
+            <td>Get some coffee</td>
+            <td>You need coffee as you are a coder</td>
+            <td><button class="btn btn-primary">Delete</button></td>
+
+          </tr>
+
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+    crossorigin="anonymous"></script>
+  <script>
+    add = document.getElementById("add");
+    function getandUpdate(){
+      console.log("updating table..");
+      tit=document.getElementById('title').value;
+      desc=document.getElementById('description').value;
+      if(localStorage.getItem('itemsJson')==null){
+        itemJsonArray=[];
+        itemJsonArray.push([tit,desc]);
+        localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray));
+      }
+      else{
+        itemJsonArrayStr=localStorage.getItem('itemsJson');//items stored previously
+        //will be in string, we are fetching them
+        itemJsonArray=JSON.parse(itemJsonArrayStr);//converting them to object
+        itemJsonArray.push([tit,desc]);
+        localStorage.setItem('itemsJson',JSON.stringify(itemJsonArray));
+      }
+      update();
+    }
+
+
+    function update(){
+      if(localStorage.getItem('itemsJson')==null){
+        itemJsonArray=[];
+        localStorage.setItem('itemsJson', JSON.stringify(itemJsonArray));
+      }
+      else{
+        itemJsonArrayStr=localStorage.getItem('itemsJson');//items stored previously
+        //will be in string, we are fetching them
+        itemJsonArray=JSON.parse(itemJsonArrayStr);
+      }
+      //Populate the table
+      tableBody=document.getElementById('tablebody');
+      let str="";
+      itemJsonArray.forEach((element,index)=>{
+        str +=`
+        <tr>
+          <th scope="row">${index+1}</th>
+          <td>${element[0]}</td>
+          <td>${element[1]}</td>
+          <td><button class="btn btn-primary" onclick="deleted(${index})">Delete</button></td>
+
+        </tr>`;
+        
+      });
+      tableBody.innerHTML=str;
+    
+
+    }
+      
+
+    
+    add.addEventListener("click",getandUpdate);
+    update();
+    function deleted(itemIndex){
+      console.log("Delete",itemIndex);
+      itemJsonArrayStr=localStorage.getItem('itemsJson');
+      itemJsonArray=JSON.parse(itemJsonArrayStr);
+      //Delete items
+      itemJsonArray.splice(itemIndex,1);
+      localStorage.setItem('itemsJson',JSON.stringify(itemJsonArray));
+      update();
+      
+
+
+    }
+      
+  </script>
+
+</body>
+
+</html>
